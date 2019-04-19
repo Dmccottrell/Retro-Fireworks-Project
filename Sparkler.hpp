@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Rocket.hpp"
+#include "fw.hpp"
 
 class Sparkler : public Rocket
 {
