@@ -2,8 +2,8 @@
 #include <vector>
 #include <ncurses.h>
 #include "fw.hpp"
-#include "streamer.hpp"
-#include "palmtree.hpp"
+#include "Streamer.hpp"
+#include "Palmtree.hpp"
 #include <list>
 #include <iostream>
 
@@ -93,9 +93,29 @@ Returns rocket pointer.
 */
 Rocket *Fleet::RocketFactory(float initial_up_force)
 {
-	Rocket *pr = new Rocket();
+	Rocket *pr;
+	int chooseType = rand() % 3;
+	
+	if ((chooseType = 1))
+	{
+		pr = new Palmtree;
+		
+	}
+	else if ((chooseType = 2))
+	{
+		pr = new Streamer;
+		
+	}
+	else if ((chooseType = 3))
+	{
+		pr = new DoubleStreamer;
+		
+	}
+
 
 	(*pr).SetForce(initial_up_force, 4.0 + frand());
+	
+	//pushback or you can push it back in birth
 
 	return pr;
 }
