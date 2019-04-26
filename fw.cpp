@@ -6,10 +6,8 @@
 #include <chrono>
 #include <ctime>
 #include <iostream>
-#include "palmtree.hpp"
-#include "streamer.hpp"
-
-using namespace std;
+#include "Palmtree.hpp"
+#include "Streamer.hpp"
 
 float Rocket::gravity = 1.0;
 
@@ -20,9 +18,10 @@ Sets age to 0.
 */
 Rocket::Rocket()
 {
-	this->SetAgeLimit(rand() % (LINES - 10));
-	this->SetTriggerAge(rand() % (LINES - 20));
-	this->SetPosition(0, rand() % (COLS - 1));
+	this->SetAgeLimit(__INT_MAX__);
+	this->SetTriggerAge(__INT_MAX__);
+	this->SetPosition(0, 0);
+	this->SetForce(0, 0);
 	this->age = 0;
 }
 
@@ -87,46 +86,37 @@ Graphics can only be used in integers,
 	value and where it is drawn because floats
 	will be rounded.
 */
-void Rocket::Step(vector<Rocket *> &v)
+void Rocket::Step(std::vector<Rocket *> &v)
 {
 	for (size_t i = 0; i < v.size(); i++)
 	{
-		Rocket r = *(v.at(i));
+		(v.at(i))->position.x += (v.at(i))->force.x;
+		(v.at(i))->position.y += (v.at(i))->force.y;
 
-		r.position.x += r.force.x;
-		r.position.y += r.force.y;
+		(v.at(i))->force.y -= (v.at(i))->gravity;
 
-		r.position.y += r.gravity;
-
-		r.age += 1;
+		(v.at(i))->age += 1;
 	}
 }
 
 bool Rocket::IsAlive()
 {
-	if (this->age <= age_limit)
+	/* if (this->age <= this->age_limit)
 	{
 		return true;
 	}
 	else
 	{
 		return false;
-	}
-	return true;
+	} */
+
+	//return (this->age == this->age_limit);
+	return (this->age <= this->age_limit);
 }
 
 bool Rocket::IsTriggered()
 {
-	if (this->age >= this->trigger_age)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-
-	return false;
+	return (this->age == this->trigger_age);
 }
 
 /*
@@ -145,31 +135,10 @@ a new vector.
 The new vector is inserted onto the rockets vector.
 Initial rocket pointer is deleted to deallocate memory.
 */
-void Rocket::Trigger(vector<Rocket *> &v)
+void Rocket::Trigger(std::vector<Rocket *> &v)
 {
-	int chooseType = rand() % 3;
-	Rocket *r;
-	vector<Rocket *> newV;
-
-	if ((chooseType = 1))
-	{
-		r = new PalmTree;
-		(*r).Trigger(newV);
-	}
-	else if ((chooseType = 2))
-	{
-		r = new Streamer;
-		(*r).Trigger(newV);
-	}
-	else if ((chooseType = 3))
-	{
-		r = new DoubleStreamer;
-		(*r).Trigger(newV);
-	}
-
-	v.insert(v.end(), newV.begin(), newV.end());
-
-	delete r;
+	Rocket *r = new Rocket();
+	v.push_back(r);
 }
 
 int Rocket::GetAge()

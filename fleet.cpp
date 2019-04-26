@@ -13,17 +13,16 @@ if rocket's age exceeds age limit.
 */
 void Fleet::Cull()
 {
-	auto it = rockets.begin();
-
-	if (it != rockets.end())
+	for (auto it = rockets.begin(); it != rockets.end(); it++)
 	{
-		if (!((*it)->IsAlive()))
+		if ((*(it))->IsAlive())
 		{
-			it = rockets.erase(it);
+			continue;
 		}
 		else
 		{
-			++it;
+			delete *it;
+			it = rockets.erase(it);
 		}
 	}
 }
@@ -43,10 +42,9 @@ void Fleet::Birth(float initial_up_force)
 
 	if (birthR <= 15)
 	{
-		for (int i = 0; i < birthR; i++)
+		for (int i = 0; i < (rand() % 5); i++)
 		{
-			Rocket *r = RocketFactory(initial_up_force);
-			rockets.push_back(r);
+			rockets.push_back(RocketFactory(initial_up_force));
 		}
 	}
 }
@@ -59,16 +57,22 @@ Vector will combine with vector with new triggered rockets.
 void Fleet::Step()
 {
 	Rocket r;
-
 	r.Step(rockets);
+			std::vector<Rocket *> newRockets;
 
-	if (r.IsTriggered())
+
+	for (size_t i = 0; i < rockets.size(); i++)
 	{
-		std::vector<Rocket *> newRockets;
 
-		r.Trigger(newRockets);
+		if (rockets.at(i)->IsTriggered())
+		{
 
-		rockets.insert(rockets.end(), newRockets.begin(), newRockets.end());
+			rockets.at(i)->Trigger(newRockets);
+
+			rockets.insert(rockets.end(), newRockets.begin(), newRockets.end());
+
+			newRockets.clear();
+		}
 	}
 }
 
@@ -78,11 +82,9 @@ to be drawn in terminal.
 */
 void Fleet::Draw()
 {
-	for (size_t i = 0; i <= rockets.size(); i++)
+	for (size_t i = 0; i < rockets.size(); i++)
 	{
-		Rocket r = *(rockets.at(i));
-
-		r.Draw();
+		rockets.at(i)->Draw();
 	}
 }
 
@@ -95,27 +97,25 @@ Rocket *Fleet::RocketFactory(float initial_up_force)
 {
 	Rocket *pr;
 	int chooseType = rand() % 3;
-	
-	if ((chooseType = 1))
+
+	if ((chooseType == 0))
 	{
 		pr = new Palmtree;
-		
 	}
-	else if ((chooseType = 2))
+	else if ((chooseType == 1))
 	{
 		pr = new Streamer;
-		
 	}
-	else if ((chooseType = 3))
+	else if ((chooseType == 2))
 	{
 		pr = new DoubleStreamer;
-		
 	}
 
+	(*pr) = Rocket();
 
-	(*pr).SetForce(initial_up_force, 4.0 + frand());
-	
-	//pushback or you can push it back in birth
-
+	(*pr).SetForce(0, -initial_up_force);
+	(*pr).SetTriggerAge(3);
+	(*pr).SetAgeLimit(40);
+	(*pr).SetPosition(rand() % (COLS - 1), (LINES - 1));
 	return pr;
 }
