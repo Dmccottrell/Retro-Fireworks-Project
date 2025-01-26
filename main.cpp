@@ -4,85 +4,51 @@
     Class:      example: CSC 1810 - Section 1
 */
 
-#include <thread>
-#include <chrono>
 #include <vector>
-#include <ctime>
-#include <ncurses.h>
-
-#include "fw.hpp"
+#include <iostream>
+#include "Rocket.hpp"
 #include "Streamer.hpp"
 #include "Palmtree.hpp"
-#include "fleet.hpp"
+#include "Sparkler.hpp"
 
-using namespace std;
+int main() {
+    std::vector<Rocket *> rockets;
 
-/*	frand() - this function returns a floating point value chosen
-	at random in the range of -0.5 to 0.5. It can be used to perturb
-	constant values.
+    // Create a new Streamer rocket and set its properties
+    Rocket *r = new Streamer();
+    r->SetPosition(10, 10);
+    r->SetForce(1, -2);
+    r->SetAgeLimit(100);
 
-	For example, if you want values near 4 you can do this:
-	4 + frand()
+    rockets.push_back(r);  // Add the rocket to the list
 
-	This will return in values from 3.5 to 4.5.
-*/
+    // Trigger action for the rocket
+    r->Trigger(rockets);
 
-float frand()
-{
-	return float(rand()) / float(RAND_MAX) - 0.5f;
-}
+    // Create a new Palmtree rocket and set its properties
+    Rocket *p = new Palmtree();
+    p->SetPosition(20, 20);
+    p->SetForce(0, -3);
+    p->SetAgeLimit(80);
 
-/*	main()
+    rockets.push_back(p);  // Add the Palmtree rocket to the list
 
-	The program currently offers no means of termination other than CNTRL-c.
-*/
+    // Trigger action for the Palmtree rocket
+    p->Trigger(rockets);
 
-int main(int argc, char *argv[])
-{
-	float initial_up_force = 4.0;
-	srand((unsigned int)time(nullptr));
-	Fleet fleet;
+    // Main loop for updating the rockets and drawing them on the screen
+    for (int age = 0; age < 100; age++) {
+        for (Rocket *rocket : rockets) {
+            rocket->Step();
+            rocket->Draw();
+        }
+        // Add any other updates, like checking if rockets are still alive
+    }
 
-	/*	If argv[1] is given, it is taken to be a value for the initial
-		up force given to a rocket. The default up force is 4 in this
-		program. If your terminal window is short, use a smaller number.
-		If your terminal window is very tall, try a larger number.
-	*/
-	if (argc > 1) {
-		initial_up_force = stof(argv[1]);
-	}
+    // Clean up rockets when done
+    for (Rocket *rocket : rockets) {
+        delete rocket;
+    }
 
-	initscr();
-	curs_set(0);
-	/*	Gravity is the pervasive down force and is constant for all
-		rockets. Because it is the same for all rockets, it is declared
-		as a static. Rocket::SetGravity() is likewise a static method
-		within Rocket.
-	*/
-	Rocket::SetGravity(-0.2);
-
-	/*	A Fleet object manages (and hides the details of) the collection
-		of Rockets. The flow here is:
-		- Possibly make new rockets
-		- Advance the simulation for each currently defined rocket. Note
-		  that if the given rocket is one which explodes creating subrockets,
-		  it is done within the Step() function.
-		- Draw each rocket.
-		- Eliminate rockets that have aged out.
-	*/
-	while (true)
-	{
-		erase();
-		fleet.Birth(initial_up_force);
-		fleet.Step();
-		fleet.Draw();
-		fleet.Cull();
-		box(stdscr, 0, 0);
-		mvaddstr(0, 1, " RETRO FIREWORKS ");
-		refresh();
-		this_thread::sleep_for(chrono::milliseconds(40));
-	}
-	curs_set(1);
-	endwin();
-	return 0;
+    return 0;
 }

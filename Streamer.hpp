@@ -1,15 +1,9 @@
 #pragma once
 #include <vector>
-#include "fw.hpp"
+#include "Rocket.hpp"
 
 class Streamer : public Rocket
 {
-  public:
-	virtual void Trigger(std::vector<Rocket *> & v);
-};
-
-class DoubleStreamer : public Streamer
-{
-  public:
-	virtual void Trigger(std::vector<Rocket *> & v);
+public:
+    virtual void Trigger(std::vector<Rocket *> &v);  // Override the trigger action for Streamer
 };

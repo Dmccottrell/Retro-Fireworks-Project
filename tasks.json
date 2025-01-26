@@ -1,0 +1,22 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build active file",
+			"type": "shell",
+			"command": "/usr/bin/g++", // Windows: g++ or g++.exe, Linux/Mac: /usr/bin/g++
+			"args": [
+				"-g",
+				"${file}",
+				"-o",
+				"${fileDirname}/${fileBasenameNoExtension}"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": ["$gcc"],
+			"detail": "Generated task by Debugger."
+		}
+	]
+}

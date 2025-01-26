@@ -1,9 +1,8 @@
 #pragma once
-
-#include "fw.hpp"
+#include "Rocket.hpp"
 
 class Sparkler : public Rocket
 {
-  public:
-	void Draw();
+public:
+    void Draw();  // Override the Draw method for Sparkler
 };

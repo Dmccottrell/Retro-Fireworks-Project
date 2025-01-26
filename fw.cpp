@@ -9,139 +9,98 @@
 #include "Palmtree.hpp"
 #include "Streamer.hpp"
 
-float Rocket::gravity = 1.0;
+float Rocket::gravity = 1.0; // Default gravity value, applied to all rockets
 
-/*
-Randomnly assigns rocket with age limit,
-trigger age, and position.
-Sets age to 0.
-*/
+// Constructor: Initializes the rocket with default values
 Rocket::Rocket()
 {
-	this->SetAgeLimit(__INT_MAX__);
-	this->SetTriggerAge(__INT_MAX__);
-	this->SetPosition(0, 0);
-	this->SetForce(0, 0);
-	this->age = 0;
+    this->SetAgeLimit(__INT_MAX__);  // Set age limit to the maximum possible integer value
+    this->SetTriggerAge(__INT_MAX__); // Set trigger age to maximum integer value
+    this->SetPosition(0, 0);         // Set the initial position to (0, 0)
+    this->SetForce(0, 0);            // Set the initial force (speed) to (0, 0)
+    this->age = 0;                   // The rocket starts with age 0
 }
 
 Rocket::~Rocket()
 {
+    // Destructor for cleaning up resources (currently no special cleanup needed)
 }
 
-void Rocket::SetTriggerAge(int i)
-{
-	this->trigger_age = i;
+// Setter for the trigger age
+void Rocket::SetTriggerAge(int i) { 
+    this->trigger_age = i; 
 }
 
-void Rocket::SetAgeLimit(int i)
-{
-	this->age_limit = i;
+// Setter for the age limit
+void Rocket::SetAgeLimit(int i) { 
+    this->age_limit = i; 
 }
 
-/*
-Assigns rocket position with position
-of another rocket.
-*/
+// Set the position of the rocket based on another rocket's position
 void Rocket::SetPosition(Rocket &other)
 {
-	this->position.x = other.position.x;
-	this->position.y = other.position.y;
+    this->position.x = other.position.x;
+    this->position.y = other.position.y;
 }
 
-/*
-0 = LINES - 1
-Starting at 0 to COLS - 1
-*/
+// Set the rocket's position using specific x and y coordinates
 void Rocket::SetPosition(float x, float y)
 {
-	this->position.x = x;
-	this->position.y = y;
+    this->position.x = x;
+    this->position.y = y;
 }
 
-/*
-IF x force is 0, rocket only goes up and down
-IF y force is 0, rocket only goes right to left
-*/
+// Set the force (movement speed) applied to the rocket in x and y directions
 void Rocket::SetForce(float x, float y)
 {
-	this->force.x = x;
-	this->force.y = y;
+    this->force.x = x;
+    this->force.y = y;
 }
 
-/*
-Shows character in terminal based on current
-rocket position.
-*/
+// Draw the rocket on the screen at its current position
 void Rocket::Draw()
 {
-	mvaddch(this->position.y, this->position.x, '*');
+    mvaddch(this->position.y, this->position.x, '*');  // Using curses library to draw rocket as an asterisk
 }
 
-/*
-Add force to current position
-Subtract Gravity from y force
-Graphics can only be used in integers,
-	there will be a difference between numerical
-	value and where it is drawn because floats
-	will be rounded.
-*/
+// Update the rocket's position based on its force, and apply gravity
 void Rocket::Step(std::vector<Rocket *> &v)
 {
-	for (size_t i = 0; i < v.size(); i++)
-	{
-		(v.at(i))->position.x += (v.at(i))->force.x;
-		(v.at(i))->position.y += (v.at(i))->force.y;
+    for (size_t i = 0; i < v.size(); i++)
+    {
+        // Update the rocket's position based on its current force
+        (v.at(i))->position.x += (v.at(i))->force.x;
+        (v.at(i))->position.y += (v.at(i))->force.y;
 
-		(v.at(i))->force.y -= (v.at(i))->gravity;
+        // Apply gravity to the rocket's vertical force (y direction)
+        (v.at(i))->force.y -= (v.at(i))->gravity;
 
-		(v.at(i))->age += 1;
-	}
+        // Increment the rocket's age by 1
+        (v.at(i))->age += 1;
+    }
 }
 
+// Check if the rocket is still alive based on its age and age limit
 bool Rocket::IsAlive()
 {
-	/* if (this->age <= this->age_limit)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	} */
-
-	//return (this->age == this->age_limit);
-	return (this->age <= this->age_limit);
+    return (this->age <= this->age_limit);  // Rocket is alive if its age is within the age limit
 }
 
+// Check if the rocket has triggered its event based on its age
 bool Rocket::IsTriggered()
 {
-	return (this->age == this->trigger_age);
+    return (this->age == this->trigger_age);  // Triggered if age matches the trigger age
 }
 
-/*
-Gravity only affects y force
-*/
+// Set the global gravity value that will affect all rockets
 void Rocket::SetGravity(float g)
 {
-	gravity = g;
+    gravity = g;
 }
 
-/*
-Rocket is randomnly assigned a rocket type between
-Palmtree, Streamer, and Double Streamer.
-New rockets of that rocket type are created and added to
-a new vector.
-The new vector is inserted onto the rockets vector.
-Initial rocket pointer is deleted to deallocate memory.
-*/
+// Trigger a new rocket and add it to the vector of rockets
 void Rocket::Trigger(std::vector<Rocket *> &v)
 {
-	Rocket *r = new Rocket();
-	v.push_back(r);
-}
-
-int Rocket::GetAge()
-{
-	return this->age;
+    Rocket *r = new Rocket();  // Create a new Rocket object
+    v.push_back(r);            // Add the new rocket to the vector of rockets
 }
