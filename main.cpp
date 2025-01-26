@@ -39,7 +39,7 @@ int main() {
     // Main loop for updating the rockets and drawing them on the screen
     for (int age = 0; age < 100; age++) {
         for (Rocket *rocket : rockets) {
-            rocket->Step();
+            rocket->Step(rockets);
             rocket->Draw();
         }
         // Add any other updates, like checking if rockets are still alive

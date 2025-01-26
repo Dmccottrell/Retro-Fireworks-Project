@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <ncurses.h>
+
 #include "fw.hpp"
 #include "Streamer.hpp"
 #include "Palmtree.hpp"
