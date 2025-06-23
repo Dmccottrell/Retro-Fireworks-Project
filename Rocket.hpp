@@ -1,38 +1,54 @@
-#pragma once
+#ifndef ROCKET_HPP
+#define ROCKET_HPP
+
 #include <vector>
 
+struct Position {
+    float x, y;
+};
+
 class Rocket {
-  public:
+public:
+    static float gravity;  // Global gravity for all rockets
+
+    // Constructor and Destructor
     Rocket();
     virtual ~Rocket();
 
+    // Setters and Getters
     void SetTriggerAge(int i);
     void SetAgeLimit(int i);
-    void SetPosition(Rocket &other);
     void SetPosition(float x, float y);
+    void SetPosition(Rocket &other);
     void SetForce(float x, float y);
-    virtual void Draw();
-    virtual void Step(std::vector<Rocket*>& v);  // Updated to accept vector
-    virtual void Trigger(std::vector<Rocket*>& v);  // Virtual method to be overridden
 
-    int GetAge();
-    bool IsAlive();
-    bool IsTriggered();
+    // Position and Force Getters
+    Position GetPosition() const { return position; }  // Getter for position
 
+    // Core functionalities
+    virtual void Draw() = 0;  // Draw function, virtual for derived classes
+    virtual void Trigger(std::vector<Rocket*>& v);  // Trigger a new rocket
+
+    void Step(std::vector<Rocket*>& v);  // Update rocket position and age
+    bool IsAlive();  // Check if rocket is alive based on age limit
+    bool IsTriggered();  // Check if rocket is triggered based on its age
+
+    // Set global gravity for all rockets
     static void SetGravity(float g);
 
-  protected:
+protected:
+    Position position;
+    Position force;
     int age;
     int age_limit;
     int trigger_age;
 
-    struct {
-        float x, y;
-    } position;
-
-    struct {
-        float x, y;
-    } force;
-
-    static float gravity;
+private:
+    // These can be set in constructors and modified using setters
+    void SetAgeLimit(int i);
+    void SetTriggerAge(int i);
+    void SetPosition(float x, float y);
+    void SetForce(float x, float y);
 };
+
+#endif

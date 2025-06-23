@@ -1,34 +1,14 @@
 #include "Streamer.hpp"
-#include "Sparkler.hpp"
-#include <cmath>
+#include <ncurses.h>
+#include <iostream>
 
-void Streamer::Trigger(std::vector<Rocket *> &v)
-{
-    for (int i = 0; i < 8; i++) {
-        Rocket *s = new Sparkler;  // Create a new Sparkler rocket
-        *s = Rocket();  // Copy the base Rocket object to the Sparkler
+// Implement the Trigger method for Streamer
+void Streamer::Trigger(std::vector<Rocket*>& v) {
+    Rocket* r = new Streamer();  // Create a new Streamer rocket
+    v.push_back(r);  // Add it to the rockets vector
+}
 
-        // Set direction based on the value of i (directional movement)
-        if (i == 0) {
-            s->SetForce(this->force.x, this->force.y - 2);
-        } else if (i == 1) {
-            s->SetForce(this->force.x + sqrt(2), this->force.y - sqrt(2));
-        } else if (i == 2) {
-            s->SetForce(this->force.x + 2, this->force.y);
-        } else if (i == 3) {
-            s->SetForce(this->force.x + sqrt(2), this->force.y + sqrt(2));
-        } else if (i == 4) {
-            s->SetForce(this->force.x, this->force.y + 2);
-        } else if (i == 5) {
-            s->SetForce(this->force.x - sqrt(2), this->force.y + sqrt(2));
-        } else if (i == 6) {
-            s->SetForce(this->force.x - 2, this->force.y);
-        } else if (i == 7) {
-            s->SetForce(this->force.x - sqrt(2), this->force.y - sqrt(2));
-        }
-
-        s->SetAgeLimit(40);  // Set the sparkler's age limit
-        s->SetPosition(*this);  // Set the sparkler's position based on the parent rocket
-        v.push_back(s);  // Add the sparkler to the rocket list
-    }
+// Implement the Draw method for Streamer
+void Streamer::Draw() {
+    mvaddch(this->position.y, this->position.x, '*');  // Display Streamer rocket as an asterisk
 }

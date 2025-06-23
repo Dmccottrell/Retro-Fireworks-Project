@@ -1,6 +1,14 @@
-#include "Rocket.hpp"
+#ifndef STREAMER_HPP
+#define STREAMER_HPP
 
+#include "Rocket.hpp"
+#include <vector>
+
+// Streamer class inherits from Rocket
 class Streamer : public Rocket {
-  public:
-    virtual void Trigger(std::vector<Rocket*>& v);  // Override Trigger
+public:
+    void Trigger(std::vector<Rocket*>& v) override;  // Override Trigger method
+    void Draw() override;  // Override Draw method
 };
+
+#endif

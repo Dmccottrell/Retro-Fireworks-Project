@@ -1,8 +1,9 @@
 #pragma once
 #include "Rocket.hpp"
+#include <vector>
 
 class Sparkler : public Rocket
 {
 public:
-    void Draw();  // Override the Draw method for Sparkler
+    virtual void Trigger(std::vector<Rocket *> &v);
 };

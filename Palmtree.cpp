@@ -1,21 +1,14 @@
 #include "Palmtree.hpp"
-#include <vector>
-#include "Sparkler.hpp"
+#include <iostream>
+#include <ncurses.h>
 
-void Palmtree::Trigger(std::vector<Rocket *> &v)
-{
-	int hForce = -4;
-	for (int i = 0; i < 9; i++)
-	{
-		
-		Rocket *s = new Sparkler();
+// Implement the Trigger method for Palmtree
+void Palmtree::Trigger(std::vector<Rocket*>& v) {
+    Rocket* r = new Palmtree();  // Create a new Palmtree rocket
+    v.push_back(r);  // Add it to the rockets vector
+}
 
-		*s = Rocket();
-		s->SetForce(this->force.x + hForce, this->force.y - 1);
-		s->SetPosition(*this);
-		s->SetAgeLimit(40);
-		
-		v.push_back(s);
-		hForce++;
-	}
+// Implement the Draw method for Palmtree
+void Palmtree::Draw() {
+    mvaddch(this->position.y, this->position.x, '@');  // Display Palmtree rocket as an at symbol
 }

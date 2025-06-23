@@ -1,13 +1,12 @@
 #include "Sparkler.hpp"
-#include <curses.h>
 
-void Sparkler::Draw()
+void Sparkler::Trigger(std::vector<Rocket *> &v)
 {
-    int a = this->GetAge();
+    // Create and configure a new Sparkler rocket
+    Rocket *r = new Rocket();
+    r->SetPosition(30, 30);  // Example position for Sparkler
+    r->SetForce(0, -4);      // Example force for Sparkler
+    r->SetAgeLimit(90);
 
-    if ((a % 2) == 0) {
-        mvaddch(this->position.y, this->position.x, 'x');
-    } else {
-        mvaddch(this->position.y, this->position.x, '+');
-    }
+    v.push_back(r);
 }

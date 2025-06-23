@@ -2,21 +2,26 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "build active file",
+			"label": "Build Fireworks",
 			"type": "shell",
-			"command": "/usr/bin/g++", // Windows: g++ or g++.exe, Linux/Mac: /usr/bin/g++
+			"command": "g++",
 			"args": [
-				"-g",
-				"${file}",
+				"main.cpp",
+				"fw.cpp",
+				"fleet.cpp",
+				"Streamer.cpp",
+				"Palmtree.cpp",
+				"DoubleStreamer.cpp",
+				"-lncurses",
 				"-o",
-				"${fileDirname}/${fileBasenameNoExtension}"
+				"fireworks"
 			],
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			},
 			"problemMatcher": ["$gcc"],
-			"detail": "Generated task by Debugger."
+			"detail": "Compiles the fireworks project using g++ with ncurses."
 		}
 	]
 }

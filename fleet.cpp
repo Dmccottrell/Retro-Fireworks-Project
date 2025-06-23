@@ -1,121 +1,47 @@
-#include "fleet.hpp"
-#include <vector>
-#include <ncurses.h>
-#include "fw.hpp"
-#include "Streamer.hpp"
-#include "Palmtree.hpp"
-#include <list>
+#include "Fleet.hpp"
 #include <iostream>
+#include <cstdlib>
+#include <algorithm>  
 
-/*
-Erases rocket pointers from rockets vector
-if rocket's age exceeds age limit.
-*/
-void Fleet::Cull()
-{
-	for (auto it = rockets.begin(); it != rockets.end(); it++)
-	{
-		if ((*(it))->IsAlive())
-		{
-			continue;
-		}
-		else
-		{
-			delete *it;
-			it = rockets.erase(it);
-		}
-	}
+// Constructor
+Fleet::Fleet() {}
+
+// Destructor
+Fleet::~Fleet() {
+    // Delete all rockets from the vector to avoid memory leaks
+    for (Rocket* r : rockets) {
+        delete r;
+    }
+    rockets.clear();
 }
 
-/*
-Rockets are created and inserted into rockets vector.
-*/
-void Fleet::Birth(float initial_up_force)
-{
-	/*
-	To keep rockets from birthing too fast,
-	mod rand by 100, then say if int 15 or less,
-	then birth. else, no.
-	*/
-
-	int birthR = rand() % 100;
-
-	if (birthR <= 15)
-	{
-		for (int i = 0; i < (rand() % 5); i++)
-		{
-			rockets.push_back(RocketFactory(initial_up_force));
-		}
-	}
+// Birth new rockets (using the initial force)
+void Fleet::Birth(float initial_up_force) {
+    Rocket* r = new Streamer();  // Create a new Streamer rocket (or any derived class)
+    r->SetPosition(rand() % 80, 24);  // Set random position (within bounds of terminal screen)
+    r->SetForce(0, -initial_up_force);  // Set upward force
+    rockets.push_back(r);  // Add to fleet
 }
 
-/*
-Iterates through vector of rockets to move each rocket.
-If rocket is at trigger_age, rocket will trigger into new rockets.
-Vector will combine with vector with new triggered rockets.
-*/
-void Fleet::Step()
-{
-	Rocket r;
-	r.Step(rockets);
-			std::vector<Rocket *> newRockets;
-
-
-	for (size_t i = 0; i < rockets.size(); i++)
-	{
-
-		if (rockets.at(i)->IsTriggered())
-		{
-
-			rockets.at(i)->Trigger(newRockets);
-
-			rockets.insert(rockets.end(), newRockets.begin(), newRockets.end());
-
-			newRockets.clear();
-		}
-	}
+// Update rocket positions
+void Fleet::Step() {
+    for (Rocket* r : rockets) {
+        r->Step(rockets);  // Move all rockets
+    }
 }
 
-/*
-Iterates through rockets vector causes each rocket
-to be drawn in terminal.
-*/
-void Fleet::Draw()
-{
-	for (size_t i = 0; i < rockets.size(); i++)
-	{
-		rockets.at(i)->Draw();
-	}
+// Remove rockets that are no longer alive
+void Fleet::Cull() {
+    rockets.erase(std::remove_if(rockets.begin(), rockets.end(), [](Rocket* r) {
+        bool alive = r->IsAlive();
+        if (!alive) delete r;  // Delete the rocket if it's no longer alive
+        return !alive;
+    }), rockets.end());
 }
 
-/*
-Creates new rocket pointer.
-Sets rocket force using function parameter.
-Returns rocket pointer.
-*/
-Rocket *Fleet::RocketFactory(float initial_up_force)
-{
-	Rocket *pr;
-	int chooseType = rand() % 3;
-
-	if ((chooseType == 0))
-	{
-		pr = new Palmtree;
-	}
-	else if ((chooseType == 1))
-	{
-		pr = new Streamer;
-	}
-	else if ((chooseType == 2))
-	{
-		pr = new DoubleStreamer;
-	}
-
-	(*pr) = Rocket();
-
-	(*pr).SetForce(0, -initial_up_force);
-	(*pr).SetTriggerAge(3);
-	(*pr).SetAgeLimit(40);
-	(*pr).SetPosition(rand() % (COLS - 1), (LINES - 1));
-	return pr;
+// Draw all rockets on the screen
+void Fleet::Draw() {
+    for (Rocket* r : rockets) {
+        r->Draw();
+    }
 }
